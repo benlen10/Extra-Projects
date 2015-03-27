@@ -14,7 +14,7 @@ int maxWords;
 int nWords;
 WordInfo*  wordArray;
 
-#define MAXWORD 1000
+#define MAXWORD 2000
 int wordLength;
 char word[MAXWORD];
 FILE * fd;
@@ -30,32 +30,8 @@ void toLower(char *s) {
 return;
 }
 
-// It returns the next word from stdin.
-// If there are no more more words it returns NULL. 
+
 static char * nextword() {
-	int c;
-	char* rtword = &word[0];
-	int i = 0;
-	int status = 0;
-	while ((c=getc(fd))!=-1){
-	status = 0;
-	word[i] = c;
-	if(c == ' ' || c == '\n' || c == '\t' || c == '\r'){
-	if (wordLength > 0){
-		wordLength = 0;
-		word[i] = '\0';
-		i = 0;	
-		return rtword;
-		}
-	wordLength = 0;
-	i=0;
-	status = 1;
-	}
-	if (status == 0){
-	wordLength++;
-	i++;
-	}
-	}
 }
 
 int
@@ -69,75 +45,88 @@ main(int argc, char **argv)
 	char * filename = argv[1];
 
 	fd = fopen(filename, "r");	
-	char words[100][30];
-	char temp[30];
-	int count[100];
+	char words[500][30];
+	char temp[500];
+	int count[500];
 	int length = 1;
 	int i =0;
 	int j;
+	char c;
+	int stat = 0;
 	int status,totalwords = 0;
-	while((fscanf(fd,"%s", temp)) != EOF){
-		
-		for(j = 0; temp[j]; j++){  
-		temp[j] = tolower(temp[j]);
-		if(temp[j] == '.'){
-			temp[j] = '\0';
-		}
-		}
-		
-		status = 0;
-		for(j =0; j< length; j++){
-			if(strcmp(temp,words[j])==0){
+		do{
+		c = fgetc(fd);
+		c = tolower(c);
+			stat = 0;
+		if (((c>= 'a') && (c<= 'z'))||((c>= 'A') && (c<= 'Z'))){
+			while(((c>= 'a') && (c<= 'z'))||((c>= 'A') && (c<= 'Z'))){  //Step through rest of the word
+			temp[j] = c;
+			j++;
+			c = tolower(fgetc(fd));
+			}
+			temp[j] = '\0';    // Place Null char at end of word
+			
+			for(j =0; j< length; j++){  
+			if(strcmp(temp,words[j])==0){   //Check to see if word already exists
 				count[j]++;
+				totalwords++;
 				status = 1;
 			}
 		}
-			if(status == 0){
+			if(status == 0){                  //If it does not exist, add to list
 				strcpy(words[length-1],temp);
 				count[length-1] = 1;
 				length++;
+				totalwords++;
 			}
-			totalwords++;
 		}
+
+			status = 0;	
+			j = 0;
+		}while(c != EOF);
 		
+		close(fd);
 		int x;
 
-
-		
-		int min = 200;
-		int start,pos,tempn = 0;
-		int max = 1;
-		char * tempw = malloc(1000);
-		
-		
-		start = 0;
-		while(start < (length-1)){
-			min = 200;
+		int tmp = 0;
+	
+		char * tempa = malloc(1000);
+		while(1){
+			
 			status = 0;
-			for(x=start; x<(length-1); x++){
-				if(words[x][0] < min){
-					min = words[x][0];
-					pos = x;
+			for(x=0; x<(length); x++){
+				if((strcmp(words[x],words[x+1]) > 0)){
+					tempa = malloc(1000);
+					tmp = 0;
+					strcpy(tempa,words[x]);
+					tmp = count[x];
+					strcpy(words[x],words[x+1]);
+					count[x] = count[x+1];
+					strcpy(words[x+1],tempa);
+					count[x+1] = tmp;
 					status = 1;
+				}
 			}
-			}
-			if (status == 1){
-			strcpy(tempw,words[start]); //Copy current position to temp
-			tempn = count[start];
-					strcpy(words[start],words[pos]); //Replace lowest position
-					count[start] = count[pos];
-					strcpy(words[pos],tempw);
-					count[pos] = tempn; 
+			if(status == 0){
 				
-			}
-			start++;
-		}
+				int start;
+				if(length >50){
+					start = 2;
+				}
+				else{
+					start = 2;
+				}
 
 	
-
-	for(x=0; x < (length-1); x++){ 
+	for(x=start; x <= (length); x++){ 
 	printf("%s %d\n", words[x], count[x]);
 	}
+	
 	return 0;
+			}
+		}
+		printf("DONE");
+		return 0;
+		
+		
 }
-
