@@ -1,0 +1,1 @@
+This Java program will solve the Guess Who game based on user input. It utlizes a decision tree to efficiently determine the character.
