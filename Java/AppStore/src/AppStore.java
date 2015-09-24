@@ -1,7 +1,17 @@
 import java.io.*;
 import java.time.Instant;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
+
+//Title:            App Store
+//Files:            App.java, AppRating.java, AppScoreComparator.java
+//Semester:     Fall 2015
+//
+//Author:         Ben Leninton
+//Email:           lenington@wisc.edu
+//CS Login:      lenington
+//Lecturer's Name:  Jim Skrentny
 
 public class AppStore {
 	
@@ -24,7 +34,7 @@ public class AppStore {
 			System.err.println("Failed to initialize the application!");
 			System.exit(1);
 		}
-		
+		appStoreDB.initial = false;     
 		System.out.println("Welcome to the App Store!\n"
 				   + "Start by browsing the top free and the top paid apps "
 				   + "today on the App Store.\n"
@@ -35,7 +45,7 @@ public class AppStore {
 	
 	private static boolean initializeFromInputFiles(String userDataFile, String 
 			categoryListFile, String appDataFile, String appActivityFile)  {
-		//TODO Remove this exception and implement the method
+
 		String email;
 		String firstName;
 		String lastName;
@@ -57,12 +67,20 @@ public class AppStore {
 		int tmp;
 
 		while((tmp = userData.read())!=-1){
-			c = (char) tmp;
+			c = (char) tmp;                             //Parse Email
 		while(c!=','){
 			sb.append(c);
 			c = (char) userData.read();
 		}
 		email = sb.toString();
+		
+		sb = new StringBuilder();               //Parse password
+		c = (char) userData.read();
+		while(c!=','){
+			sb.append(c);
+			c = (char) userData.read();
+		}
+		password = sb.toString();
 		
 		sb = new StringBuilder();               //Parse first name
 		c = (char) userData.read();
@@ -80,13 +98,7 @@ public class AppStore {
 		}
 		lastName = sb.toString();
 		
-		sb = new StringBuilder();               //Parse password
-		c = (char) userData.read();
-		while(c!=','){
-			sb.append(c);
-			c = (char) userData.read();
-		}
-		password = sb.toString();
+		
 		
 		sb = new StringBuilder();               //Parse country
 		c = (char) userData.read();
@@ -102,10 +114,10 @@ public class AppStore {
 			sb.append(c);
 			c = (char) userData.read();
 		}
-		type = sb.toString();
 		
-		//System.out.printf(" <%s><%s><%s><%s><%s><%s>\n",email, password, firstName,
-			//	lastName, country, type);
+		type = sb.toString();
+		type= type.substring(0,(type.length()-1));
+	
 		appStoreDB.addUser(email, password, firstName,
 			lastName, country, type);
 		
@@ -114,17 +126,20 @@ public class AppStore {
 		}
 		//SCAN CATEGORIES
 		
-		
+		String cat;
 		sb = new StringBuilder(); 
 		while((tmp = categoryList.read())!=-1){
 			c = (char) tmp;
 			while((c!='\n')&&(tmp!=-1)){
-				//System.out.printf("%c",c);
 				sb.append(c);
 				tmp =  categoryList.read();
 				c = (char) tmp;
 			}
-			appStoreDB.addCategory(sb.toString());
+			cat = sb.toString();
+			if(c=='\n'){
+			cat= cat.substring(0,(cat.length()-1));
+			}
+			appStoreDB.addCategory(cat);
 		
 			sb = new StringBuilder();
 		}
@@ -136,13 +151,17 @@ public class AppStore {
 		String appId;
 		String appName;
 		String appcategory;
+		String fName;
+		String lName;
+		String dPass;
+		String dRegion;
 		double price;
 		long uploadTimestamp;
 		
 
 		
 		 tmp = 0;
-			while((tmp = appData.read())!=-1){
+			while((tmp = appData.read())!=-1){           //Parse Email
 				c = (char) tmp;
 				sb = new StringBuilder();  
 		while(c!=','){
@@ -186,6 +205,8 @@ public class AppStore {
 		
 		price = Double.parseDouble(sb.toString());
 		
+		
+		
 		sb = new StringBuilder();               //Parse timestamp
 		c = (char) appData.read();
 		while((c!='\n')&&(tmp!= -1)){
@@ -195,15 +216,21 @@ public class AppStore {
 		}
 		sb.append('\0');
 		
+		User u =  appStoreDB.findUserByEmail(developeremail );    //Parse developer name
+		fName = u.getFirstName();
+		lName = u.getLastName();
+		dRegion = u.getCountry();
+		//Parse pass??
+
+		
 		String t = sb.substring(0,13);
 		uploadTimestamp = Long.parseLong(t);
 
 		//Create developer user
 
-		//System.err.printf("Devel Email: %s\n\n", developeremail);
-		appStoreDB.uploadApp(new User(developeremail, "temp", "Devel", "Store", "US", "developer"), appId, appName, appcategory, price, uploadTimestamp);
-		//System.out.printf(" <%s> <%s> <%s> <%s> <%s> <%s>\n",developeremail, appId, appName, appcategory, price, uploadTimestamp);
-
+	
+		appStoreDB.uploadApp(u, appId, appName, appcategory, price, uploadTimestamp);
+	
 		}
 		
 		//APP ACTIVITY
@@ -214,12 +241,16 @@ public class AppStore {
 		short rating;
 
 			while((tmp = appActivity.read())!=-1){
+				
 				c = (char) tmp;
 				appaction = c;
 				if (appaction=='d'){
 				
+				
+				
+					appActivity.read();
 				sb = new StringBuilder();             //Parse useremail  
-				appActivity.read(); //Skip comma
+				c= (char) appActivity.read(); //Skip comma
 
 				while(c!=','){
 					sb.append(c);
@@ -230,20 +261,26 @@ public class AppStore {
 	
 		sb = new StringBuilder();             //Parse appid  
 		c = (char) appActivity.read();
-		while((c!='\n')&&(tmp!= -1)){
+		while((c!='\n')&&(tmp!= -1)&&(c!=' ')){
 			sb.append(c);
 			tmp = appActivity.read();
 			c = (char) tmp;
 		}
 		appid = sb.toString();
+		appid = appid.substring(0,(appid.length()-1));
+			App ap = appStoreDB.findAppByAppId(appid);
+			User us = appStoreDB.findUserByEmail(useremail);
+
+			
+			appStoreDB.downloadApp(us, ap);
+			
 		
-		
-			//System.out.printf(" Download: <%s> <%s>\n",useremail,appid);
 		}
 		else{
-
+			
+			appActivity.read();
 			sb = new StringBuilder();             //Parse useremail  
-			appActivity.read(); //Skip comma
+			c= (char) appActivity.read(); //Skip comma
 
 			while(c!=','){
 				sb.append(c);
@@ -263,18 +300,16 @@ public class AppStore {
 	
 	
 	sb = new StringBuilder();              
-	//c = (char) appActivity.read();
 	c = (char) appActivity.read();
-	//System.out.printf("Char:%c",c);
 	sb.append(c);
-	
-		rating = Short.parseShort(sb.toString());//Parse rating 
+		rating = Short.parseShort(sb.toString());
 		while((c!='\n')&&(tmp!= -1)){
 			tmp = appActivity.read();
 			c = (char) tmp;
 		}
-		
-		//System.out.printf(" Rate: <%s> <%s> <%d>\n",useremail,appid,rating);
+		App a = appStoreDB.findAppByAppId(appid);
+		User u = appStoreDB.findUserByEmail(useremail);
+		appStoreDB.rateApp(u,a,rating);
 	}
 			
 			
@@ -448,7 +483,7 @@ public class AppStore {
 			String appId = scanner.next();
 			App app = appStoreDB.findAppByAppId(appId);
 			appStoreDB.downloadApp(appUser, app);
-			System.out.println("Downloaded App " + app.getAppName());
+			//Moved println line to downloadApp() method in AppStoreDB.java
 		}
 		
 	}
@@ -462,7 +497,8 @@ public class AppStore {
 			App app = appStoreDB.findAppByAppId(appId);
 			short rating = scanner.nextShort();
 			appStoreDB.rateApp(appUser, app, rating);
-			System.out.println("Rated app " + app.getAppName());
+			//Moved println line to downloadApp() method in AppStoreDB.java
+			
 		}
 		
 	}

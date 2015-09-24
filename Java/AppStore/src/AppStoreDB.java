@@ -3,10 +3,21 @@ import java.util.*;
 
 public class AppStoreDB {
 	
-	//Private data members
+	//Main Class File:   AppStore.java
+	//File:                  AppStoreDB.java
+	//Semester:          Fall 2015
+
+	//Author:         Ben Leninton
+	//Email:           lenington@wisc.edu
+	//CS Login:      lenington
+	//Lecturer's Name:  Jim Skrentny
+	
+	//Data members
 	private List<User> users = new ArrayList();
 	private List<App> apps = new ArrayList();
 	private List<String> categories = new ArrayList();
+	public boolean initial = true;                       
+
 	
 
 	public AppStoreDB() {
@@ -22,17 +33,15 @@ public class AppStoreDB {
 		while(it.hasNext()){
 			u = it.next();
 			if(u.getEmail().equals(email)){
-				System.err.println("User already exists in database");   //Custom error message
 				throw new IllegalArgumentException();
 			}
 		}
-		
+
 		u = new User(email,password,firstName,
 			lastName, country, type);
 		users.add(u);
 		return u;
 		
-		//FIX!!!! Implement check for existing dup user
 	}
 	
 	public void addCategory(String category) {
@@ -50,9 +59,9 @@ public class AppStoreDB {
 			u = it.next();
 			if(u.getEmail().equals(email)){
 				return u;
+
 			}
 		}
-		System.out.println("Email not found");
 		return null;
 		
 	}
@@ -66,7 +75,6 @@ public class AppStoreDB {
 				return a;
 			}
 		}
-		System.out.println("appId not found");
 		return null;
 	}
 	
@@ -82,7 +90,7 @@ public class AppStoreDB {
 				return null;
 			}
 		}
-		System.out.println("Email not found");
+		//System.out.println("Email not found");
 		return null;
 	}
 
@@ -91,16 +99,16 @@ public class AppStoreDB {
 			long timestamp) throws IllegalArgumentException {
 		
 		if(!(uploader.isDeveloper())){
-			System.err.println("User is not a developer");
 			return null;
 		}
-		                                   //Check for dup app id
+		if(price<0){
+		}
+		                                                             //Check for dup app id
 		App ap;
 		Iterator<App> it = apps.iterator();
 			while(it.hasNext()){
 				ap = it.next();
 				if(ap.getAppId().equals(appId)){
-					System.err.println("App Id already exists");
 					throw new IllegalArgumentException();
 				}
 			}
@@ -115,21 +123,31 @@ public class AppStoreDB {
 	
 	public void downloadApp(User user, App app) {	
 		if(hasUserDownloadedApp(user,app)){
-			System.err.println("User has already downloaded this app");
+		
 			return;
 		}
 		else{
 		app.download(user);
 		user.download(app);
+		if(!initial){                                                                             //Don't print during text file initialization 
+		System.out.println("Downloaded App " + app.getAppName());
+		}
 		}
 	}
 	
 	public void rateApp(User user, App app, short rating) {
 		if (hasUserDownloadedApp(user, app)){
+			if((rating<1)||(rating>5)){
+				System.out.println("Something went wrong. Rating command failed!"); 
+				return;
+			}
 		app.rate(user, rating);
+		if(!initial){                                                                             //Don't print during text file initialization 
+		System.out.println("Rated app " + app.getAppName());
+		}
 		}
 		else{
-			System.err.println("User has not downloaded app");
+			System.out.println("Something went wrong. Rating command failed!"); 
 			return;
 		}
 	}
@@ -269,11 +287,11 @@ public class AppStoreDB {
 		boolean status = true;
 		boolean trigger = false;
 		while(status==true){
-			System.out.printf("Loop(Outer)");
+			//System.out.printf("Loop(Outer)");
 			trigger=false;
 			i = 0;
 			while(i<(recent.size()-1)){
-				System.out.printf("Loop(inter)");
+				//System.out.printf("Loop(inter)");
 			a1 = recent.get(i);
 			a2 = recent.get(i+1);
 			if(a1.getUploadTimestamp()<a2.getUploadTimestamp()){

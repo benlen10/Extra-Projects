@@ -1,5 +1,15 @@
 import java.util.*;
 
+//Main Class File:   AppStore.java
+//File:                  App.java
+//Semester:          Fall 2015
+
+//Author:         Ben Leninton
+//Email:           lenington@wisc.edu
+//CS Login:      lenington
+//Lecturer's Name:  Jim Skrentny
+
+
 public class App implements Comparable<App> {
 	
 	//Constructor data members
@@ -50,7 +60,6 @@ public class App implements Comparable<App> {
 
 	public void download(User user) {		
 		downloadCount++;
-		System.out.println("App downloaded");
 	}
 
 	public void rate(User user, short rating) throws IllegalArgumentException {
@@ -82,7 +91,7 @@ public class App implements Comparable<App> {
 
 
 	public double getAppScore() {
-		return (getRevenueForApp()*downloadCount);
+		return (getAverageRating() * Math.log(1 + downloadCount));
 	}
 
 	@Override
@@ -94,6 +103,6 @@ public class App implements Comparable<App> {
 			return -1;
 		}
 		}
-	}
 
+}
 

@@ -1,4 +1,13 @@
 
+//Main Class File:   AppStore.java
+//File:                  AppRating.java
+//Semester:          Fall 2015
+
+//Author:         Ben Leninton
+//Email:           lenington@wisc.edu
+//CS Login:      lenington
+//Lecturer's Name:  Jim Skrentny
+
 public class AppRating {	
 	private App app;
 	private User user;
