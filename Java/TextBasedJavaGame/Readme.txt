@@ -1,0 +1,1 @@
+A text based java game framework that supports custom user files to generate game scenarios and rules
