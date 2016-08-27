@@ -1,1 +1,0 @@
-A simple program to encrypt a string by shifting the char values.

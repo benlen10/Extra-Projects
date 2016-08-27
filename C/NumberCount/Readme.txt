@@ -1,1 +1,0 @@
-A small program that will count the numbers of digits entered through standard input
