@@ -1,2 +1,0 @@
-This is a program that I wrote to control a Rube Goldberg machine that I designed for the Bakken Museum in 2010. 
-The machine was installed as an exhibit in the main enterance and is coin operated to generate revenue for Education programs
