@@ -1,0 +1,15 @@
+CurrentUser|BenLen10
+DatabasePath|C:\Users\Ben\Dropbox\GitHub\Projects\UniCade Interface Release (V1.33)\Database.txt
+EmulatorFolderPath|C:\UniCade\Emulators
+MediaFolderPath|C:\UniCade\Media
+ShowSplash|0
+ScanOnStartup|0
+RestrictESRB|0
+RequireLogin|0
+CmdOrGui|0
+LoadingScreen|0
+PaySettings|0|0|1|15
+License Key||
+***UserData***
+UniCade|temp|0|unicade@unicade.com|0| ||Crash Nitro Kart#GBA#|
+BenLen10|Star6120|0|lenington@wisc.edu|0|Star6120|Mature||
