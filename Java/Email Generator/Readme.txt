@@ -1,1 +1,0 @@
-A simple program that will generate an email address based on a full name and domain
