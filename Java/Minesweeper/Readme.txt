@@ -1,1 +1,0 @@
-this program will simulate the Minesweeper game in the terminal window
