@@ -1,2 +1,0 @@
-This is an android application that I designed for my CS180 class at purdue.
-The Client android application will transmit a list of names to the server which will pair them up based on their location and return a match to the mobile application.

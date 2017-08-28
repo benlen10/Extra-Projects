@@ -1,2 +1,0 @@
-cd C:\Users\BenLen\workspace\SafeWalkClient\bin
-java ClientTest 192.0.0.1 8888 Input.txt
