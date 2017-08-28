@@ -1,1 +1,0 @@
-This program uses a basic GUI to roughly calculate college fees based on various factors
