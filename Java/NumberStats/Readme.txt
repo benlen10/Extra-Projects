@@ -1,1 +1,0 @@
-This program will calcualte the average, lowest and highest grades bases on an input string
