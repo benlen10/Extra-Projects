@@ -1,1 +1,0 @@
-Verify that a long string has balanced grouping charactors. Ex: '{' '[' '('
